@@ -18,7 +18,7 @@ function App() {
         <div className="nav-container">
           <div className="logo">
             <HiOutlineSpeakerphone className="logo-icon" />
-            <span className="logo-text">ECHO</span>
+            <span className="logo-text">ISOBEL / ECHO</span>
           </div>
           <div className="nav-links">
             <a href="#features">Features</a>
