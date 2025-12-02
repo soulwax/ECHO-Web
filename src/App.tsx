@@ -7,9 +7,9 @@ import {
   HiOutlineSpeakerphone,
   HiOutlineStop,
   HiOutlineVideoCamera,
-  HiOutlineVolumeUp
-} from 'react-icons/hi'
-import './App.css'
+  HiOutlineVolumeUp,
+} from "react-icons/hi";
+import "./App.css";
 
 function App() {
   return (
@@ -23,9 +23,9 @@ function App() {
           <div className="nav-links">
             <a href="#features">Features</a>
             <a href="#about">About</a>
-            <a 
-              href="https://github.com/soulwax/ECHO" 
-              target="_blank" 
+            <a
+              href="https://github.com/soulwax/ECHO"
+              target="_blank"
               rel="noopener noreferrer"
               className="github-link"
             >
@@ -40,27 +40,33 @@ function App() {
           <div className="hero-bottom">
             <div className="hero-content">
               <div className="hero-title-section">
-                <img src="/songbird.png" alt="ECHO Songbird" className="songbird-img" />
+                <img
+                  src="/songbird.png"
+                  alt="ECHO Songbird"
+                  className="songbird-img"
+                />
                 <h1 className="hero-title">
                   A Discord Music Bot
                   <span className="highlight"> That Doesn't Suck</span>
                 </h1>
               </div>
               <p className="hero-subtitle">
-                High-quality audio streaming, smart caching, overall imo, a good experience 10/10. 
-                Better than the majority of the other discord music bots but with fewer features yet. Made with love, as is the songbird api that enables the bot's capabilities.
+                High-quality audio streaming, smart caching, overall imo, a good
+                experience 10/10. Better than the majority of the other discord
+                music bots but with fewer features yet. Made with love, as is
+                the songbird api that enables the bot's capabilities.
               </p>
               <div className="hero-buttons">
-                <a 
-                  href="https://discord.com/oauth2/authorize" 
+                <a
+                  href="https://discord.com/oauth2/authorize"
                   className="btn btn-primary"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   Add to Discord
                 </a>
-                <a 
-                  href="https://github.com/soulwax/ECHO" 
+                <a
+                  href="https://github.com/soulwax/ECHO"
                   className="btn btn-secondary"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -87,9 +93,12 @@ function App() {
                   <div className="mockup-embed">
                     <div className="embed-content">
                       <div className="embed-title">
-                        <HiOutlineMusicNote className="inline-icon" /> Now Playing
+                        <HiOutlineMusicNote className="inline-icon" /> Now
+                        Playing
                       </div>
-                      <div className="embed-description">High-quality audio streaming</div>
+                      <div className="embed-description">
+                        High-quality audio streaming
+                      </div>
                       <div className="embed-progress">
                         <div className="progress-bar"></div>
                       </div>
@@ -114,7 +123,8 @@ function App() {
                 </div>
                 <h3 className="feature-title">High-Quality Audio</h3>
                 <p className="feature-description">
-                  320kbps MP3 source with 192kbps Opus output for crystal-clear sound
+                  320kbps MP3 source with 192kbps Opus output for crystal-clear
+                  sound
                 </p>
               </div>
               <div className="feature-card">
@@ -159,7 +169,8 @@ function App() {
                 </div>
                 <h3 className="feature-title">Volume Management</h3>
                 <p className="feature-description">
-                  Normalizes volume across tracks with automatic ducking when people speak
+                  Normalizes volume across tracks with automatic ducking when
+                  people speak
                 </p>
               </div>
               <div className="feature-card">
@@ -177,7 +188,8 @@ function App() {
                 </div>
                 <h3 className="feature-title">Starchild Music API</h3>
                 <p className="feature-description">
-                  Streams directly from the Starchild Music API - no YouTube or Spotify required
+                  Streams directly from the Starchild Music API - no YouTube or
+                  Spotify required
                 </p>
               </div>
               <div className="feature-card">
@@ -202,15 +214,15 @@ function App() {
             <div className="about-content">
               <div className="about-text">
                 <p>
-                  ECHO is a highly-opinionated, self-hosted Discord music bot designed 
-                  for small to medium-sized Discord servers. It's built with TypeScript 
-                  and focuses on providing a seamless, high-quality music experience 
-                  without the bloat.
+                  ECHO is a highly-opinionated, self-hosted Discord music bot
+                  designed for small to medium-sized Discord servers. It's built
+                  with TypeScript and focuses on providing a seamless,
+                  high-quality music experience without the bloat.
                 </p>
                 <p>
-                  With advanced caching, smart volume management, and support for 
-                  livestreams, ECHO delivers everything you need for your community's 
-                  music needs.
+                  With advanced caching, smart volume management, and support
+                  for livestreams, ECHO delivers everything you need for your
+                  community's music needs.
                 </p>
                 <div className="about-stats">
                   <div className="stat">
@@ -240,10 +252,18 @@ function App() {
               <span className="logo-text">ECHO</span>
             </div>
             <div className="footer-links">
-              <a href="https://github.com/soulwax/ECHO" target="_blank" rel="noopener noreferrer">
+              <a
+                href="https://github.com/soulwax/ECHO"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 GitHub
               </a>
-              <a href="https://github.com/soulwax/ECHO/blob/master/LICENSE" target="_blank" rel="noopener noreferrer">
+              <a
+                href="https://github.com/soulwax/ECHO/blob/master/LICENSE"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 License
               </a>
             </div>
@@ -254,7 +274,7 @@ function App() {
         </div>
       </footer>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
