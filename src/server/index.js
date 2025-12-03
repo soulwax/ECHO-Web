@@ -12,7 +12,8 @@ app.use((req, res, next) => {
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     res.header('Access-Control-Allow-Credentials', 'true');
     if (req.method === 'OPTIONS') {
-        return res.sendStatus(200);
+        res.sendStatus(200);
+        return;
     }
     next();
 });
@@ -22,7 +23,8 @@ app.all('/api/auth/*', async (req, res) => {
         const { GET, POST } = handlers;
         const handler = req.method === 'GET' ? GET : POST;
         if (!handler) {
-            return res.status(405).json({ error: 'Method not allowed' });
+            res.status(405).json({ error: 'Method not allowed' });
+            return;
         }
         // Build full URL
         const protocol = req.protocol || 'http';
@@ -58,7 +60,7 @@ app.all('/api/auth/*', async (req, res) => {
             if (key.toLowerCase() === 'set-cookie') {
                 // Set-Cookie headers need special handling
                 const cookies = nextRes.headers.getSetCookie();
-                cookies.forEach(cookie => {
+                cookies.forEach((cookie) => {
                     res.append('Set-Cookie', cookie);
                 });
             }
@@ -73,7 +75,7 @@ app.all('/api/auth/*', async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 });
-app.get('/health', (req, res) => {
+app.get('/health', (_req, res) => {
     res.json({ status: 'ok' });
 });
 app.listen(PORT, () => {
