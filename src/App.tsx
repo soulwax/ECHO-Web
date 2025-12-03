@@ -24,6 +24,13 @@ function App() {
             <a href="#features">Features</a>
             <a href="#about">About</a>
             <a
+              href="https://songbirdapi.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              API
+            </a>
+            <a
               href="https://github.com/soulwax/ECHO"
               target="_blank"
               rel="noopener noreferrer"
