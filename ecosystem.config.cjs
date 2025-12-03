@@ -1,0 +1,52 @@
+module.exports = {
+  apps: [
+    {
+      name: 'echo-web',
+      script: 'npm',
+      args: 'run dev',
+      cwd: '/home/starchild/workspace/discord/muse/web',
+      instances: 1,
+      exec_mode: 'fork',
+      autorestart: true,
+      watch: false,
+      max_memory_restart: '1G',
+      env: {
+        NODE_ENV: 'development',
+        PORT: 3123,
+      },
+      env_production: {
+        NODE_ENV: 'production',
+        PORT: 3123,
+      },
+      error_file: './logs/web-error.log',
+      out_file: './logs/web-out.log',
+      log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
+      merge_logs: true,
+    },
+    {
+      name: 'echo-auth',
+      script: 'npm',
+      args: 'run dev:auth',
+      cwd: '/home/starchild/workspace/discord/muse/web',
+      instances: 1,
+      exec_mode: 'fork',
+      autorestart: true,
+      watch: false,
+      max_memory_restart: '512M',
+      env: {
+        NODE_ENV: 'development',
+        PORT: 3001,
+        NEXTAUTH_URL: 'http://localhost:3123',
+      },
+      env_production: {
+        NODE_ENV: 'production',
+        PORT: 3001,
+        NEXTAUTH_URL: 'https://echo.soulwax.dev',
+      },
+      error_file: './logs/auth-error.log',
+      out_file: './logs/auth-out.log',
+      log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
+      merge_logs: true,
+    },
+  ],
+};
