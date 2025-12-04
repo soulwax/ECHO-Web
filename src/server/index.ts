@@ -9,25 +9,27 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // CORS middleware for development
-app.use((req, res, next) => {
+app.use((req, res, next): void => {
   res.header('Access-Control-Allow-Origin', FRONTEND_URL);
   res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   res.header('Access-Control-Allow-Credentials', 'true');
   if (req.method === 'OPTIONS') {
-    return res.sendStatus(200);
+    res.sendStatus(200);
+    return;
   }
   next();
 });
 
 // NextAuth API routes
-app.all('/api/auth/*', async (req, res) => {
+app.all('/api/auth/*', async (req, res): Promise<void> => {
   try {
     const { GET, POST } = handlers;
     const handler = req.method === 'GET' ? GET : POST;
     
     if (!handler) {
-      return res.status(405).json({ error: 'Method not allowed' });
+      res.status(405).json({ error: 'Method not allowed' });
+      return;
     }
 
     // Build full URL
@@ -58,7 +60,9 @@ app.all('/api/auth/*', async (req, res) => {
       body,
     });
 
-    const nextRes = await handler(nextReq);
+    // Type assertion: NextAuth v5 handlers accept standard Request objects
+    // The handler type expects NextRequest but standard Request is compatible
+    const nextRes = await handler(nextReq as any);
     
     // Convert Next.js Response to Express response
     const bodyText = await nextRes.text();
@@ -84,7 +88,7 @@ app.all('/api/auth/*', async (req, res) => {
   }
 });
 
-app.get('/health', (req, res) => {
+app.get('/health', (_req, res) => {
   res.json({ status: 'ok' });
 });
 
