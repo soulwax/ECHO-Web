@@ -14,11 +14,11 @@ module.exports = {
       max_memory_restart: '1G',
       env: {
         NODE_ENV: 'development',
-        PORT: 3123,
+        PORT: 3001,
       },
       env_production: {
         NODE_ENV: 'production',
-        PORT: 3123,
+        PORT: 3001,
       },
       error_file: path.join(__dirname, 'logs', 'web-error.log'),
       out_file: path.join(__dirname, 'logs', 'web-out.log'),
@@ -38,12 +38,12 @@ module.exports = {
       env: {
         NODE_ENV: 'development',
         PORT: 3001,
-        NEXTAUTH_URL: 'http://localhost:3123',
+        NEXTAUTH_URL: 'http://localhost:3001',
       },
       env_production: {
         NODE_ENV: 'production',
         PORT: 3001,
-        NEXTAUTH_URL: 'https://echo.soulwax.dev',
+        NEXTAUTH_URL: 'https://isobel.battlecry.tech',
       },
       error_file: path.join(__dirname, 'logs', 'auth-error.log'),
       out_file: path.join(__dirname, 'logs', 'auth-out.log'),
