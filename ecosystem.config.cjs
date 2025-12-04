@@ -20,6 +20,7 @@ module.exports = {
         NODE_ENV: 'production',
         PORT: 3001,
       },
+      // For production, you should build first and use: args: 'run preview'
       error_file: path.join(__dirname, 'logs', 'web-error.log'),
       out_file: path.join(__dirname, 'logs', 'web-out.log'),
       log_date_format: 'YYYY-MM-DD HH:mm:ss Z',

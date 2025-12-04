@@ -63,7 +63,7 @@ app.all('/api/auth/*', async (req, res): Promise<void> => {
       method: req.method,
       headers,
       body,
-    });
+    }) as Parameters<typeof handler>[0];
 
     const nextRes = await handler(nextReq);
 
@@ -109,7 +109,7 @@ app.get('/api/guilds', async (req, res): Promise<void> => {
     const nextReq = new Request(fullUrl, {
       method: 'GET',
       headers,
-    });
+    }) as Parameters<typeof handlers.GET>[0];
 
     // Get session from NextAuth
     const sessionResponse = await handlers.GET(nextReq);
