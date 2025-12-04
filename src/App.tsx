@@ -10,6 +10,7 @@ import {
   HiOutlineVolumeUp,
 } from "react-icons/hi";
 import "./App.css";
+import HealthIndicator from "./components/HealthIndicator";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
             <span className="logo-text">ISOBEL / (formerly ECHO)</span>
           </div>
           <div className="nav-links">
+            <HealthIndicator />
             <a href="#features">Features</a>
             <a href="#about">About</a>
             <a
