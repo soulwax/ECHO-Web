@@ -1,3 +1,5 @@
+// File: src/hooks/useAuth.ts
+
 import { useState, useEffect } from 'react';
 import { getSession, signIn, signOut } from '../lib/auth-client';
 
@@ -39,4 +41,3 @@ export function useAuth() {
     isAuthenticated: !!session?.user,
   };
 }
-

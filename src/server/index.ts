@@ -1,3 +1,5 @@
+// File: src/server/index.ts
+
 import express from 'express';
 import { handlers } from '../auth';
 
@@ -26,7 +28,7 @@ app.all('/api/auth/*', async (req, res): Promise<void> => {
   try {
     const { GET, POST } = handlers;
     const handler = req.method === 'GET' ? GET : POST;
-    
+
     if (!handler) {
       res.status(405).json({ error: 'Method not allowed' });
       return;
@@ -36,7 +38,7 @@ app.all('/api/auth/*', async (req, res): Promise<void> => {
     const protocol = req.protocol || 'http';
     const host = req.get('host') || 'localhost:3001';
     const fullUrl = `${protocol}://${host}${req.originalUrl}`;
-    
+
     // Convert Express req to Next.js Request
     const headers = new Headers();
     Object.entries(req.headers).forEach(([key, value]) => {
@@ -60,27 +62,25 @@ app.all('/api/auth/*', async (req, res): Promise<void> => {
       body,
     });
 
-    // Type assertion: NextAuth v5 handlers accept standard Request objects
-    // The handler type expects NextRequest but standard Request is compatible
-    const nextRes = await handler(nextReq as any);
-    
+    const nextRes = await handler(nextReq);
+
     // Convert Next.js Response to Express response
     const bodyText = await nextRes.text();
     res.status(nextRes.status);
-    
+
     // Copy headers, handling Set-Cookie specially
-    nextRes.headers.forEach((value, key) => {
+    nextRes.headers.forEach((value: string, key: string) => {
       if (key.toLowerCase() === 'set-cookie') {
         // Set-Cookie headers need special handling
         const cookies = nextRes.headers.getSetCookie();
-        cookies.forEach(cookie => {
+        cookies.forEach((cookie: string) => {
           res.append('Set-Cookie', cookie);
         });
       } else {
         res.setHeader(key, value);
       }
     });
-    
+
     res.send(bodyText);
   } catch (error) {
     console.error('Auth handler error:', error);
@@ -95,4 +95,3 @@ app.get('/health', (_req, res) => {
 app.listen(PORT, () => {
   console.log(`Auth server running on http://localhost:${PORT}`);
 });
-

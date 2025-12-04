@@ -1,3 +1,5 @@
+// File: src/db/schema.ts
+
 import { sqliteTable, text, integer, primaryKey } from 'drizzle-orm/sqlite-core';
 import { relations } from 'drizzle-orm';
 
@@ -168,4 +170,3 @@ export const guildMembersRelations = relations(guildMembers, ({ one }) => ({
   guild: one(discordGuilds, { fields: [guildMembers.guildId], references: [discordGuilds.id] }),
   user: one(discordUsers, { fields: [guildMembers.userId], references: [discordUsers.id] }),
 }));
-

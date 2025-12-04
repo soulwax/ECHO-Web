@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+// File: src/hooks/useAuth.ts
+import { useEffect, useState } from 'react';
 import { getSession, signIn, signOut } from '../lib/auth-client';
 export function useAuth() {
     const [session, setSession] = useState(null);

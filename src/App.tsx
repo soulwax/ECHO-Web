@@ -1,3 +1,5 @@
+// File: src/App.tsx
+
 import {
   HiOutlineCode,
   HiOutlineExternalLink,
@@ -10,6 +12,7 @@ import {
   HiOutlineVolumeUp,
 } from "react-icons/hi";
 import "./App.css";
+import HealthIndicator from "./components/HealthIndicator";
 
 function App() {
   return (
@@ -18,11 +21,19 @@ function App() {
         <div className="nav-container">
           <div className="logo">
             <HiOutlineSpeakerphone className="logo-icon" />
-            <span className="logo-text">ISOBEL / ECHO</span>
+            <span className="logo-text">ISOBEL / (formerly ECHO)</span>
           </div>
           <div className="nav-links">
+            <HealthIndicator />
             <a href="#features">Features</a>
             <a href="#about">About</a>
+            <a
+              href="https://songbirdapi.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              API
+            </a>
             <a
               href="https://github.com/soulwax/ECHO"
               target="_blank"
@@ -42,7 +53,7 @@ function App() {
               <div className="hero-title-section">
                 <img
                   src="/songbird.png"
-                  alt="ECHO Songbird"
+                  alt="ISOBEL Songbird"
                   className="songbird-img"
                 />
                 <h1 className="hero-title">
@@ -66,7 +77,7 @@ function App() {
                   Add to Discord
                 </a>
                 <a
-                  href="https://github.com/soulwax/ECHO"
+                  href="https://github.com/soulwax/ISOBEL"
                   className="btn btn-secondary"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -86,7 +97,7 @@ function App() {
                   <div className="mockup-message">
                     <div className="mockup-avatar"></div>
                     <div className="mockup-text">
-                      <span className="mockup-username">ECHO</span>
+                      <span className="mockup-username">ISOBEL</span>
                       <span className="mockup-time">Today at 2:30 PM</span>
                     </div>
                   </div>
@@ -214,14 +225,14 @@ function App() {
             <div className="about-content">
               <div className="about-text">
                 <p>
-                  ECHO is a highly-opinionated, self-hosted Discord music bot
+                  ISOBEL (formerly ECHO) is a highly-opinionated, self-hosted Discord music bot
                   designed for small to medium-sized Discord servers. It's built
                   with TypeScript and focuses on providing a seamless,
                   high-quality music experience without the bloat.
                 </p>
                 <p>
                   With advanced caching, smart volume management, and support
-                  for livestreams, ECHO delivers everything you need for your
+                  for livestreams, ISOBEL delivers everything you need for your
                   community's music needs.
                 </p>
                 <div className="about-stats">
@@ -249,18 +260,18 @@ function App() {
           <div className="footer-content">
             <div className="footer-logo">
               <HiOutlineSpeakerphone className="logo-icon" />
-              <span className="logo-text">ECHO</span>
+              <span className="logo-text">ISOBEL</span>
             </div>
             <div className="footer-links">
               <a
-                href="https://github.com/soulwax/ECHO"
+                href="https://github.com/soulwax/ISOBEL"
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 GitHub
               </a>
               <a
-                href="https://github.com/soulwax/ECHO/blob/master/LICENSE"
+                href="https://github.com/soulwax/ISOBEL/blob/master/LICENSE"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -269,7 +280,7 @@ function App() {
             </div>
           </div>
           <div className="footer-bottom">
-            <p>© {new Date().getFullYear()} ECHO. Licensed under GPLv3.</p>
+            <p>© {new Date().getFullYear()} ISOBEL. Licensed under GPLv3.</p>
           </div>
         </div>
       </footer>

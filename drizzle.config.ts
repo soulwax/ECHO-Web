@@ -1,3 +1,5 @@
+// File: drizzle.config.ts
+
 import { defineConfig } from 'drizzle-kit';
 
 export default defineConfig({
@@ -8,4 +10,3 @@ export default defineConfig({
     url: process.env.DATABASE_URL || './data/db.sqlite',
   },
 });
-

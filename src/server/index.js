@@ -1,3 +1,4 @@
+// File: src/server/index.ts
 import express from 'express';
 import { handlers } from '../auth';
 const app = express();
@@ -51,8 +52,6 @@ app.all('/api/auth/*', async (req, res) => {
             headers,
             body,
         });
-        // Type assertion: NextAuth v5 handlers accept standard Request objects
-        // The handler type expects NextRequest but standard Request is compatible
         const nextRes = await handler(nextReq);
         // Convert Next.js Response to Express response
         const bodyText = await nextRes.text();
@@ -62,7 +61,7 @@ app.all('/api/auth/*', async (req, res) => {
             if (key.toLowerCase() === 'set-cookie') {
                 // Set-Cookie headers need special handling
                 const cookies = nextRes.headers.getSetCookie();
-                cookies.forEach(cookie => {
+                cookies.forEach((cookie) => {
                     res.append('Set-Cookie', cookie);
                 });
             }

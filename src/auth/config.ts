@@ -1,3 +1,5 @@
+// File: src/auth/config.ts
+
 import { DrizzleAdapter } from '@auth/drizzle-adapter';
 import Discord from 'next-auth/providers/discord';
 import type { DefaultSession, NextAuthConfig } from 'next-auth';
@@ -43,4 +45,3 @@ export const authConfig = {
   },
   secret: process.env.NEXTAUTH_SECRET,
 } satisfies NextAuthConfig;
-

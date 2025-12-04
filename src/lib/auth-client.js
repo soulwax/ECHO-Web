@@ -1,3 +1,4 @@
+// File: src/lib/auth-client.ts
 /**
  * Client-side authentication utilities
  * For use in React components

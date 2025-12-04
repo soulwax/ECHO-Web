@@ -1,5 +1,6 @@
-import { sqliteTable, text, integer, primaryKey } from 'drizzle-orm/sqlite-core';
+// File: src/db/schema.ts
 import { relations } from 'drizzle-orm';
+import { integer, primaryKey, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 // NextAuth required tables
 export const users = sqliteTable('user', {
     id: text('id').primaryKey(),
