@@ -1,3 +1,5 @@
+// File: src/components/HealthIndicator.tsx
+
 import { useEffect, useState } from 'react';
 import { HiCheckCircle, HiXCircle } from 'react-icons/hi';
 import './HealthIndicator.css';

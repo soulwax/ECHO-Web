@@ -1,3 +1,5 @@
+// File: src/server/index.ts
+
 import express from 'express';
 import { handlers } from '../auth';
 
@@ -93,4 +95,3 @@ app.get('/health', (_req, res) => {
 app.listen(PORT, () => {
   console.log(`Auth server running on http://localhost:${PORT}`);
 });
-

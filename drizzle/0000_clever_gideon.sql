@@ -1,3 +1,5 @@
+-- File: drizzle/0000_clever_gideon.sql
+
 CREATE TABLE `account` (
 	`userId` text NOT NULL,
 	`type` text NOT NULL,

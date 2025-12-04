@@ -1,3 +1,5 @@
+# File: .gitignore
+
 # Logs
 logs
 *.log
@@ -25,3 +27,17 @@ dist-ssr
 
 
 web
+
+.env
+.env.local
+.env.*.local
+.env.production
+.env.production.local
+.env.test
+.env.test.local
+.env.development.local
+.env.development
+.env.staging
+.env.staging.local
+.env.testing
+.env.testing.local

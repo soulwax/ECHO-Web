@@ -1,3 +1,5 @@
+// File: src/App.tsx
+
 import {
   HiOutlineCode,
   HiOutlineExternalLink,
