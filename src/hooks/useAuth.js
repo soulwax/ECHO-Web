@@ -4,11 +4,21 @@ import { getSession, signIn, signOut } from '../lib/auth-client';
 export function useAuth() {
     const [session, setSession] = useState(null);
     const [loading, setLoading] = useState(true);
+    const refreshSession = async () => {
+        const sessionData = await getSession();
+        setSession(sessionData);
+        setLoading(false);
+    };
     useEffect(() => {
-        getSession().then((sessionData) => {
-            setSession(sessionData);
-            setLoading(false);
-        });
+        refreshSession();
+        // Refresh session when window gains focus (e.g., after OAuth redirect)
+        const handleFocus = () => {
+            refreshSession();
+        };
+        window.addEventListener('focus', handleFocus);
+        return () => {
+            window.removeEventListener('focus', handleFocus);
+        };
     }, []);
     const handleSignIn = async () => {
         await signIn();

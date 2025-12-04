@@ -1,6 +1,9 @@
 // File: src/server/index.ts
 import express from 'express';
 import { handlers } from '../auth';
+import { db } from '../db';
+import { discordGuilds, guildMembers, discordUsers } from '../db/schema';
+import { eq } from 'drizzle-orm';
 const app = express();
 const PORT = process.env.PORT || 3001;
 const FRONTEND_URL = process.env.NEXTAUTH_URL || 'http://localhost:3123';
@@ -73,6 +76,60 @@ app.all('/api/auth/*', async (req, res) => {
     }
     catch (error) {
         console.error('Auth handler error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+// API endpoint to get user's Discord guilds
+app.get('/api/guilds', async (req, res) => {
+    try {
+        // Convert Express req to Next.js Request for auth()
+        const protocol = req.protocol || 'http';
+        const host = req.get('host') || 'localhost:3001';
+        const fullUrl = `${protocol}://${host}/api/auth/session`;
+        const headers = new Headers();
+        Object.entries(req.headers).forEach(([key, value]) => {
+            if (value) {
+                headers.set(key, Array.isArray(value) ? value.join(', ') : value);
+            }
+        });
+        const nextReq = new Request(fullUrl, {
+            method: 'GET',
+            headers,
+        });
+        // Get session from NextAuth
+        const sessionResponse = await handlers.GET(nextReq);
+        const sessionText = await sessionResponse.text();
+        const session = sessionText ? JSON.parse(sessionText) : null;
+        if (!session?.user?.id) {
+            res.status(401).json({ error: 'Unauthorized' });
+            return;
+        }
+        // Get Discord user ID
+        const discordUser = await db
+            .select()
+            .from(discordUsers)
+            .where(eq(discordUsers.userId, session.user.id))
+            .limit(1);
+        if (discordUser.length === 0) {
+            res.json({ guilds: [] });
+            return;
+        }
+        const discordUserId = discordUser[0].id;
+        // Get all guilds the user is a member of
+        const userGuilds = await db
+            .select({
+            id: discordGuilds.id,
+            name: discordGuilds.name,
+            icon: discordGuilds.icon,
+            permissions: guildMembers.permissions,
+        })
+            .from(guildMembers)
+            .innerJoin(discordGuilds, eq(guildMembers.guildId, discordGuilds.id))
+            .where(eq(guildMembers.userId, discordUserId));
+        res.json({ guilds: userGuilds });
+    }
+    catch (error) {
+        console.error('Error fetching guilds:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });

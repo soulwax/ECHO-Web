@@ -36,6 +36,13 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  margin-left: 240px; /* Offset for sidebar */
+}
+
+@media (max-width: 768px) {
+  .app {
+    margin-left: 0; /* No offset on mobile */
+  }
 }
 
 /* Navigation */
@@ -46,6 +53,15 @@ body {
   background-color: rgba(30, 33, 36, 0.8);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--border-color);
+  margin-left: -240px; /* Compensate for app margin */
+  padding-left: 240px; /* Add padding to account for sidebar */
+}
+
+@media (max-width: 768px) {
+  .nav {
+    margin-left: 0;
+    padding-left: 0;
+  }
 }
 
 .nav-container {

@@ -13,10 +13,13 @@ import {
 } from "react-icons/hi";
 import "./App.css";
 import HealthIndicator from "./components/HealthIndicator";
+import DiscordLogin from "./components/DiscordLogin";
+import DiscordGuildsSidebar from "./components/DiscordGuildsSidebar";
 
 function App() {
   return (
     <div className="app">
+      <DiscordGuildsSidebar />
       <nav className="nav">
         <div className="nav-container">
           <div className="logo">
@@ -42,6 +45,7 @@ function App() {
             >
               GitHub
             </a>
+            <DiscordLogin />
           </div>
         </div>
       </nav>

@@ -12,6 +12,10 @@ export default defineConfig({
                 target: process.env.VITE_AUTH_API_URL || 'http://localhost:3001',
                 changeOrigin: true,
             },
+            '/api/guilds': {
+                target: process.env.VITE_AUTH_API_URL || 'http://localhost:3001',
+                changeOrigin: true,
+            },
         },
     },
 });
