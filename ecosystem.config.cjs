@@ -1,10 +1,12 @@
+const path = require('path');
+
 module.exports = {
   apps: [
     {
       name: 'echo-web',
       script: 'npm',
       args: 'run dev',
-      cwd: '/home/starchild/workspace/discord/muse/web',
+      cwd: __dirname,
       instances: 1,
       exec_mode: 'fork',
       autorestart: true,
@@ -18,8 +20,8 @@ module.exports = {
         NODE_ENV: 'production',
         PORT: 3123,
       },
-      error_file: './logs/web-error.log',
-      out_file: './logs/web-out.log',
+      error_file: path.join(__dirname, 'logs', 'web-error.log'),
+      out_file: path.join(__dirname, 'logs', 'web-out.log'),
       log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
       merge_logs: true,
     },
@@ -27,7 +29,7 @@ module.exports = {
       name: 'echo-auth',
       script: 'npm',
       args: 'run dev:auth',
-      cwd: '/home/starchild/workspace/discord/muse/web',
+      cwd: __dirname,
       instances: 1,
       exec_mode: 'fork',
       autorestart: true,
@@ -43,8 +45,8 @@ module.exports = {
         PORT: 3001,
         NEXTAUTH_URL: 'https://echo.soulwax.dev',
       },
-      error_file: './logs/auth-error.log',
-      out_file: './logs/auth-out.log',
+      error_file: path.join(__dirname, 'logs', 'auth-error.log'),
+      out_file: path.join(__dirname, 'logs', 'auth-out.log'),
       log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
       merge_logs: true,
     },
