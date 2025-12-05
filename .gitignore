@@ -41,3 +41,5 @@ web
 .env.staging.local
 .env.testing
 .env.testing.local
+
+.github/docs/*.md
