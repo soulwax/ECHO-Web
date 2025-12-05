@@ -32,7 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - TypeScript codebase
   - About section with statistics and project information
   - Footer with links and branding
-  - Configured to run on port 3123
+  - Configured to run on port 3001
   - Configured with allowed host: echo.soulwax.dev
   - Smooth animations and hover effects throughout
   - Mobile-first responsive design

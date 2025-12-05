@@ -8,7 +8,7 @@ import { eq, and } from 'drizzle-orm';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
-const FRONTEND_URL = process.env.NEXTAUTH_URL || 'http://localhost:3123';
+const FRONTEND_URL = process.env.NEXTAUTH_URL || 'http://localhost:3001';
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

@@ -58,6 +58,12 @@
 .login-button-primary:hover {
   background-color: var(--discord-blurple-hover);
   transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(88, 101, 242, 0.3);
+}
+
+.login-button-primary:focus {
+  outline: 2px solid var(--discord-blurple);
+  outline-offset: 2px;
 }
 
 .logout-button {
@@ -70,6 +76,12 @@
   background-color: var(--card-bg);
   color: var(--text-primary);
   border-color: var(--text-muted);
+  transform: translateY(-1px);
+}
+
+.logout-button:focus {
+  outline: 2px solid var(--discord-blurple);
+  outline-offset: 2px;
 }
 
 @media (max-width: 768px) {
