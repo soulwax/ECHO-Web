@@ -82,22 +82,51 @@
   padding: 0.5rem;
   border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s ease;
   color: var(--text-secondary);
+  position: relative;
+}
+
+.guild-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 0;
+  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+  border-radius: 0 2px 2px 0;
+  transition: height 0.2s ease;
 }
 
 .guild-item:hover {
   background-color: var(--card-bg);
   color: var(--text-primary);
+  padding-left: 0.75rem;
+}
+
+.guild-item:hover::before {
+  height: 60%;
 }
 
 .guild-item.selected {
   background-color: var(--discord-blurple);
   color: var(--text-primary);
+  padding-left: 0.75rem;
+}
+
+.guild-item.selected::before {
+  height: 80%;
 }
 
 .guild-item.selected:hover {
   background-color: var(--discord-blurple-hover);
+}
+
+.guild-item:focus {
+  outline: 2px solid var(--discord-blurple);
+  outline-offset: 2px;
 }
 
 .guild-icon {
@@ -106,6 +135,13 @@
   border-radius: 50%;
   object-fit: cover;
   flex-shrink: 0;
+  transition: transform 0.2s ease;
+  border: 2px solid transparent;
+}
+
+.guild-item:hover .guild-icon {
+  transform: scale(1.1);
+  border-color: var(--discord-blurple);
 }
 
 .guild-icon-placeholder {
@@ -120,6 +156,13 @@
   font-size: 0.875rem;
   color: var(--text-primary);
   flex-shrink: 0;
+  transition: transform 0.2s ease;
+  border: 2px solid transparent;
+}
+
+.guild-item:hover .guild-icon-placeholder {
+  transform: scale(1.1) rotate(5deg);
+  border-color: var(--discord-blurple);
 }
 
 .guild-name {
