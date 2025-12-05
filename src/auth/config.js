@@ -6,6 +6,8 @@ import { discordUsers, discordGuilds, guildMembers } from '../db/schema';
 import { eq } from 'drizzle-orm';
 export const authConfig = {
     adapter: DrizzleAdapter(db),
+    trustHost: true, // Required for NextAuth v5 when not using Next.js
+    basePath: '/api/auth', // Set the base path for auth routes
     providers: [
         Discord({
             clientId: process.env.DISCORD_CLIENT_ID,
