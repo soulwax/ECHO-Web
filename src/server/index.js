@@ -21,8 +21,9 @@ app.use((req, res, next) => {
     }
     next();
 });
-// NextAuth API routes
-app.all('/api/auth/*', async (req, res) => {
+// NextAuth API routes - match all paths starting with /api/auth/
+// Use a regex pattern to match /api/auth and everything after it
+app.all(/^\/api\/auth\/.*/, async (req, res) => {
     try {
         const { GET, POST } = handlers;
         const handler = req.method === 'GET' ? GET : POST;
@@ -30,7 +31,7 @@ app.all('/api/auth/*', async (req, res) => {
             res.status(405).json({ error: 'Method not allowed' });
             return;
         }
-        // Build full URL
+        // Build full URL using originalUrl which contains the full path
         const protocol = req.protocol || 'http';
         const host = req.get('host') || 'localhost:3001';
         const fullUrl = `${protocol}://${host}${req.originalUrl}`;
