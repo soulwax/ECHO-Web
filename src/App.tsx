@@ -11,15 +11,40 @@ import {
   HiOutlineVideoCamera,
   HiOutlineVolumeUp,
 } from "react-icons/hi";
+import { useState } from "react";
 import "./App.css";
 import HealthIndicator from "./components/HealthIndicator";
 import DiscordLogin from "./components/DiscordLogin";
 import DiscordGuildsSidebar from "./components/DiscordGuildsSidebar";
+import GuildSettings from "./components/GuildSettings";
+
+interface Guild {
+  id: string;
+  name: string;
+  icon: string | null;
+}
 
 function App() {
+  const [selectedGuild, setSelectedGuild] = useState<Guild | null>(null);
+
+  const handleGuildSelect = (guild: Guild) => {
+    setSelectedGuild(guild);
+  };
+
+  const handleBack = () => {
+    setSelectedGuild(null);
+  };
+
   return (
     <div className="app">
-      <DiscordGuildsSidebar />
+      <DiscordGuildsSidebar 
+        onGuildSelect={handleGuildSelect}
+        selectedGuildId={selectedGuild?.id}
+      />
+      {selectedGuild ? (
+        <GuildSettings guild={selectedGuild} onBack={handleBack} />
+      ) : (
+        <>
       <nav className="nav">
         <div className="nav-container">
           <div className="logo">
@@ -288,6 +313,8 @@ function App() {
           </div>
         </div>
       </footer>
+        </>
+      )}
     </div>
   );
 }

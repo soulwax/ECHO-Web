@@ -91,6 +91,15 @@
   color: var(--text-primary);
 }
 
+.guild-item.selected {
+  background-color: var(--discord-blurple);
+  color: var(--text-primary);
+}
+
+.guild-item.selected:hover {
+  background-color: var(--discord-blurple-hover);
+}
+
 .guild-icon {
   width: 40px;
   height: 40px;

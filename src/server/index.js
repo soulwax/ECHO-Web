@@ -2,8 +2,8 @@
 import express from 'express';
 import { handlers } from '../auth';
 import { db } from '../db';
-import { discordGuilds, guildMembers, discordUsers } from '../db/schema';
-import { eq } from 'drizzle-orm';
+import { discordGuilds, guildMembers, discordUsers, settings } from '../db/schema';
+import { eq, and } from 'drizzle-orm';
 const app = express();
 const PORT = process.env.PORT || 3001;
 const FRONTEND_URL = process.env.NEXTAUTH_URL || 'http://localhost:3123';
@@ -130,6 +130,149 @@ app.get('/api/guilds', async (req, res) => {
     }
     catch (error) {
         console.error('Error fetching guilds:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+// API endpoint to get guild settings
+app.get('/api/guilds/:guildId/settings', async (req, res) => {
+    try {
+        const { guildId } = req.params;
+        // Verify user is authenticated and has access to this guild
+        const protocol = req.protocol || 'http';
+        const host = req.get('host') || 'localhost:3001';
+        const fullUrl = `${protocol}://${host}/api/auth/session`;
+        const headers = new Headers();
+        Object.entries(req.headers).forEach(([key, value]) => {
+            if (value) {
+                headers.set(key, Array.isArray(value) ? value.join(', ') : value);
+            }
+        });
+        const nextReq = new Request(fullUrl, {
+            method: 'GET',
+            headers,
+        });
+        const sessionResponse = await handlers.GET(nextReq);
+        const sessionText = await sessionResponse.text();
+        const session = sessionText ? JSON.parse(sessionText) : null;
+        if (!session?.user?.id) {
+            res.status(401).json({ error: 'Unauthorized' });
+            return;
+        }
+        // Verify user is a member of this guild
+        const discordUser = await db
+            .select()
+            .from(discordUsers)
+            .where(eq(discordUsers.userId, session.user.id))
+            .limit(1);
+        if (discordUser.length === 0) {
+            res.status(403).json({ error: 'Forbidden' });
+            return;
+        }
+        const member = await db
+            .select()
+            .from(guildMembers)
+            .where(and(eq(guildMembers.guildId, guildId), eq(guildMembers.userId, discordUser[0].id)))
+            .limit(1);
+        if (member.length === 0) {
+            res.status(403).json({ error: 'You are not a member of this server' });
+            return;
+        }
+        // Get or create default settings
+        let guildSettings = await db
+            .select()
+            .from(settings)
+            .where(eq(settings.guildId, guildId))
+            .limit(1);
+        if (guildSettings.length === 0) {
+            // Create default settings
+            await db.insert(settings).values({
+                guildId,
+            });
+            guildSettings = await db
+                .select()
+                .from(settings)
+                .where(eq(settings.guildId, guildId))
+                .limit(1);
+        }
+        res.json({ settings: guildSettings[0] });
+    }
+    catch (error) {
+        console.error('Error fetching guild settings:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+// API endpoint to update guild settings
+app.post('/api/guilds/:guildId/settings', async (req, res) => {
+    try {
+        const { guildId } = req.params;
+        const updates = req.body;
+        // Verify user is authenticated and has access to this guild
+        const protocol = req.protocol || 'http';
+        const host = req.get('host') || 'localhost:3001';
+        const fullUrl = `${protocol}://${host}/api/auth/session`;
+        const headers = new Headers();
+        Object.entries(req.headers).forEach(([key, value]) => {
+            if (value) {
+                headers.set(key, Array.isArray(value) ? value.join(', ') : value);
+            }
+        });
+        const nextReq = new Request(fullUrl, {
+            method: 'GET',
+            headers,
+        });
+        const sessionResponse = await handlers.GET(nextReq);
+        const sessionText = await sessionResponse.text();
+        const session = sessionText ? JSON.parse(sessionText) : null;
+        if (!session?.user?.id) {
+            res.status(401).json({ error: 'Unauthorized' });
+            return;
+        }
+        // Verify user is a member of this guild
+        const discordUser = await db
+            .select()
+            .from(discordUsers)
+            .where(eq(discordUsers.userId, session.user.id))
+            .limit(1);
+        if (discordUser.length === 0) {
+            res.status(403).json({ error: 'Forbidden' });
+            return;
+        }
+        const member = await db
+            .select()
+            .from(guildMembers)
+            .where(and(eq(guildMembers.guildId, guildId), eq(guildMembers.userId, discordUser[0].id)))
+            .limit(1);
+        if (member.length === 0) {
+            res.status(403).json({ error: 'You are not a member of this server' });
+            return;
+        }
+        // Check if settings exist, create if not
+        const existing = await db
+            .select()
+            .from(settings)
+            .where(eq(settings.guildId, guildId))
+            .limit(1);
+        if (existing.length === 0) {
+            await db.insert(settings).values({ guildId });
+        }
+        // Update settings
+        await db
+            .update(settings)
+            .set({
+            ...updates,
+            updatedAt: new Date(),
+        })
+            .where(eq(settings.guildId, guildId));
+        // Return updated settings
+        const updated = await db
+            .select()
+            .from(settings)
+            .where(eq(settings.guildId, guildId))
+            .limit(1);
+        res.json({ settings: updated[0] });
+    }
+    catch (error) {
+        console.error('Error updating guild settings:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
