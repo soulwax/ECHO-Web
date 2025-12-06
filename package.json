@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "vite",
     "dev:auth": "tsx watch src/server/index.ts",
+    "dev:all": "concurrently \"npm run dev\" \"npm run dev:auth\" --names \"vite,auth\" --prefix-colors \"cyan,yellow\"",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
@@ -49,6 +50,7 @@
     "@types/react": "^19.2.5",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",
+    "concurrently": "^9.2.1",
     "drizzle-kit": "^0.31.7",
     "eslint": "^9.39.1",
     "eslint-plugin-react-hooks": "^7.0.1",

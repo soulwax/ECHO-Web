@@ -152,7 +152,25 @@ export const discordUsersRelations = relations(discordUsers, ({ one, many }) => 
 export const discordGuildsRelations = relations(discordGuilds, ({ many }) => ({
     members: many(guildMembers),
 }));
+// Bot settings per guild (matches BOT schema.prisma)
+export const settings = sqliteTable('setting', {
+    guildId: text('guildId').primaryKey().references(() => discordGuilds.id, { onDelete: 'cascade' }),
+    playlistLimit: integer('playlistLimit').notNull().default(50),
+    secondsToWaitAfterQueueEmpties: integer('secondsToWaitAfterQueueEmpties').notNull().default(30),
+    leaveIfNoListeners: integer('leaveIfNoListeners', { mode: 'boolean' }).notNull().default(true),
+    queueAddResponseEphemeral: integer('queueAddResponseEphemeral', { mode: 'boolean' }).notNull().default(false),
+    autoAnnounceNextSong: integer('autoAnnounceNextSong', { mode: 'boolean' }).notNull().default(false),
+    defaultVolume: integer('defaultVolume').notNull().default(100),
+    defaultQueuePageSize: integer('defaultQueuePageSize').notNull().default(10),
+    turnDownVolumeWhenPeopleSpeak: integer('turnDownVolumeWhenPeopleSpeak', { mode: 'boolean' }).notNull().default(false),
+    turnDownVolumeWhenPeopleSpeakTarget: integer('turnDownVolumeWhenPeopleSpeakTarget').notNull().default(20),
+    createdAt: integer('createdAt', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
+    updatedAt: integer('updatedAt', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
+});
 export const guildMembersRelations = relations(guildMembers, ({ one }) => ({
     guild: one(discordGuilds, { fields: [guildMembers.guildId], references: [discordGuilds.id] }),
     user: one(discordUsers, { fields: [guildMembers.userId], references: [discordUsers.id] }),
+}));
+export const discordGuildsSettingsRelations = relations(discordGuilds, ({ one }) => ({
+    settings: one(settings, { fields: [discordGuilds.id], references: [settings.guildId] }),
 }));

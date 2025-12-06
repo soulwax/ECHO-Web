@@ -11,7 +11,12 @@ interface Guild {
   permissions: string | null;
 }
 
-export default function DiscordGuildsSidebar() {
+interface DiscordGuildsSidebarProps {
+  onGuildSelect?: (guild: Guild) => void;
+  selectedGuildId?: string | null;
+}
+
+export default function DiscordGuildsSidebar({ onGuildSelect, selectedGuildId }: DiscordGuildsSidebarProps) {
   const { isAuthenticated, session } = useAuth();
   const [guilds, setGuilds] = useState<Guild[]>([]);
   const [loading, setLoading] = useState(true);
@@ -100,7 +105,20 @@ export default function DiscordGuildsSidebar() {
         ) : (
           <div className="guilds-list">
             {guilds.map((guild) => (
-              <div key={guild.id} className="guild-item" title={guild.name}>
+              <div
+                key={guild.id}
+                className={`guild-item ${selectedGuildId === guild.id ? 'selected' : ''}`}
+                title={guild.name}
+                onClick={() => onGuildSelect?.(guild)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    onGuildSelect?.(guild);
+                  }
+                }}
+              >
                 {getGuildIconUrl(guild.id, guild.icon) ? (
                   <img
                     src={getGuildIconUrl(guild.id, guild.icon)!}

@@ -5,7 +5,8 @@ import { defineConfig } from 'vite';
 export default defineConfig({
     plugins: [react()],
     server: {
-        port: 3123,
+        host: '0.0.0.0', // Listen on all interfaces
+        port: 3001,
         allowedHosts: ['echo.soulwax.dev', 'localhost', 'isobel.battlecry.tech'],
         proxy: {
             '/api/auth': {
@@ -17,5 +18,9 @@ export default defineConfig({
                 changeOrigin: true,
             },
         },
+    },
+    preview: {
+        host: '0.0.0.0', // Listen on all interfaces for production
+        port: 3001,
     },
 });
