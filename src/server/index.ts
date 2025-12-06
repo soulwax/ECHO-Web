@@ -341,6 +341,34 @@ app.post("/api/guilds/:guildId/settings", async (req, res): Promise<void> => {
   }
 });
 
+// Health check endpoint - proxies to the bot's health server
+app.get("/api/health", async (_req, res): Promise<void> => {
+  try {
+    const botHealthUrl = process.env.BOT_HEALTH_URL || "http://localhost:3002";
+    const response = await fetch(`${botHealthUrl}/health`);
+
+    if (!response.ok) {
+      res.status(response.status).json({
+        status: "error",
+        ready: false,
+        error: `Bot health check failed with status ${response.status}`
+      });
+      return;
+    }
+
+    const data = await response.json();
+    res.json(data);
+  } catch (error) {
+    console.error("Error checking bot health:", error);
+    res.status(503).json({
+      status: "error",
+      ready: false,
+      error: "Unable to connect to bot health server"
+    });
+  }
+});
+
+// Web server health check
 app.get("/health", (_req, res) => {
   res.json({ status: "ok" });
 });
