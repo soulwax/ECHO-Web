@@ -154,6 +154,40 @@ app.get('/api/guilds', async (req, res): Promise<void> => {
   }
 });
 
+// Health check endpoint that proxies to the bot's health server
+app.get('/api/health', async (_req, res): Promise<void> => {
+  try {
+    // Get bot health server URL from environment variables
+    const botHealthPort = process.env.BOT_HEALTH_PORT || '3002';
+    const botHealthUrl = process.env.BOT_HEALTH_URL || `http://localhost:${botHealthPort}`;
+    
+    const response = await fetch(`${botHealthUrl}/health`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      // Add timeout to prevent hanging
+      signal: AbortSignal.timeout(5000), // 5 second timeout
+    });
+
+    if (!response.ok) {
+      throw new Error(`Bot health server returned ${response.status}`);
+    }
+
+    const data = await response.json();
+    res.json(data);
+  } catch (error) {
+    console.error('Error fetching bot health:', error);
+    // Return error status instead of throwing
+    res.status(503).json({
+      status: 'error',
+      ready: false,
+      error: 'Bot health server unavailable',
+    });
+  }
+});
+
+// Legacy health endpoint for web server itself
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok' });
 });
