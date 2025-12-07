@@ -1,21 +1,21 @@
 // File: src/server/index.ts
-import express from 'express';
-import { handlers } from '../auth';
-import { db } from '../db';
-import { discordGuilds, guildMembers, discordUsers, settings } from '../db/schema';
-import { eq, and } from 'drizzle-orm';
+import express from "express";
+import { handlers } from "../auth";
+import { db } from "../db";
+import { discordGuilds, guildMembers, discordUsers, settings, } from "../db/schema";
+import { eq, and } from "drizzle-orm";
 const app = express();
 const PORT = process.env.PORT || 3001;
-const FRONTEND_URL = process.env.NEXTAUTH_URL || 'http://localhost:3001';
+const FRONTEND_URL = process.env.NEXTAUTH_URL || "http://localhost:3001";
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 // CORS middleware for development
 app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', FRONTEND_URL);
-    res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    res.header('Access-Control-Allow-Credentials', 'true');
-    if (req.method === 'OPTIONS') {
+    res.header("Access-Control-Allow-Origin", FRONTEND_URL);
+    res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    res.header("Access-Control-Allow-Credentials", "true");
+    if (req.method === "OPTIONS") {
         res.sendStatus(200);
         return;
     }
@@ -26,28 +26,28 @@ app.use((req, res, next) => {
 app.all(/^\/api\/auth\/.*/, async (req, res) => {
     try {
         const { GET, POST } = handlers;
-        const handler = req.method === 'GET' ? GET : POST;
+        const handler = req.method === "GET" ? GET : POST;
         if (!handler) {
-            res.status(405).json({ error: 'Method not allowed' });
+            res.status(405).json({ error: "Method not allowed" });
             return;
         }
         // Build full URL using originalUrl which contains the full path
-        const protocol = req.protocol || 'http';
-        const host = req.get('host') || 'localhost:3001';
+        const protocol = req.protocol || "http";
+        const host = req.get("host") || "localhost:3001";
         const fullUrl = `${protocol}://${host}${req.originalUrl}`;
         // Convert Express req to Next.js Request
         const headers = new Headers();
         Object.entries(req.headers).forEach(([key, value]) => {
             if (value) {
-                headers.set(key, Array.isArray(value) ? value.join(', ') : value);
+                headers.set(key, Array.isArray(value) ? value.join(", ") : value);
             }
         });
         let body;
-        if (req.method !== 'GET' && req.method !== 'HEAD') {
-            if (req.is('application/json')) {
+        if (req.method !== "GET" && req.method !== "HEAD") {
+            if (req.is("application/json")) {
                 body = JSON.stringify(req.body);
             }
-            else if (req.is('application/x-www-form-urlencoded')) {
+            else if (req.is("application/x-www-form-urlencoded")) {
                 body = new URLSearchParams(req.body).toString();
             }
         }
@@ -62,11 +62,11 @@ app.all(/^\/api\/auth\/.*/, async (req, res) => {
         res.status(nextRes.status);
         // Copy headers, handling Set-Cookie specially
         nextRes.headers.forEach((value, key) => {
-            if (key.toLowerCase() === 'set-cookie') {
+            if (key.toLowerCase() === "set-cookie") {
                 // Set-Cookie headers need special handling
                 const cookies = nextRes.headers.getSetCookie();
                 cookies.forEach((cookie) => {
-                    res.append('Set-Cookie', cookie);
+                    res.append("Set-Cookie", cookie);
                 });
             }
             else {
@@ -76,25 +76,25 @@ app.all(/^\/api\/auth\/.*/, async (req, res) => {
         res.send(bodyText);
     }
     catch (error) {
-        console.error('Auth handler error:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        console.error("Auth handler error:", error);
+        res.status(500).json({ error: "Internal server error" });
     }
 });
 // API endpoint to get user's Discord guilds
-app.get('/api/guilds', async (req, res) => {
+app.get("/api/guilds", async (req, res) => {
     try {
         // Convert Express req to Next.js Request for auth()
-        const protocol = req.protocol || 'http';
-        const host = req.get('host') || 'localhost:3001';
+        const protocol = req.protocol || "http";
+        const host = req.get("host") || "localhost:3001";
         const fullUrl = `${protocol}://${host}/api/auth/session`;
         const headers = new Headers();
         Object.entries(req.headers).forEach(([key, value]) => {
             if (value) {
-                headers.set(key, Array.isArray(value) ? value.join(', ') : value);
+                headers.set(key, Array.isArray(value) ? value.join(", ") : value);
             }
         });
         const nextReq = new Request(fullUrl, {
-            method: 'GET',
+            method: "GET",
             headers,
         });
         // Get session from NextAuth
@@ -102,7 +102,7 @@ app.get('/api/guilds', async (req, res) => {
         const sessionText = await sessionResponse.text();
         const session = sessionText ? JSON.parse(sessionText) : null;
         if (!session?.user?.id) {
-            res.status(401).json({ error: 'Unauthorized' });
+            res.status(401).json({ error: "Unauthorized" });
             return;
         }
         // Get Discord user ID
@@ -130,33 +130,33 @@ app.get('/api/guilds', async (req, res) => {
         res.json({ guilds: userGuilds });
     }
     catch (error) {
-        console.error('Error fetching guilds:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        console.error("Error fetching guilds:", error);
+        res.status(500).json({ error: "Internal server error" });
     }
 });
 // API endpoint to get guild settings
-app.get('/api/guilds/:guildId/settings', async (req, res) => {
+app.get("/api/guilds/:guildId/settings", async (req, res) => {
     try {
         const { guildId } = req.params;
         // Verify user is authenticated and has access to this guild
-        const protocol = req.protocol || 'http';
-        const host = req.get('host') || 'localhost:3001';
+        const protocol = req.protocol || "http";
+        const host = req.get("host") || "localhost:3001";
         const fullUrl = `${protocol}://${host}/api/auth/session`;
         const headers = new Headers();
         Object.entries(req.headers).forEach(([key, value]) => {
             if (value) {
-                headers.set(key, Array.isArray(value) ? value.join(', ') : value);
+                headers.set(key, Array.isArray(value) ? value.join(", ") : value);
             }
         });
         const nextReq = new Request(fullUrl, {
-            method: 'GET',
+            method: "GET",
             headers,
         });
         const sessionResponse = await handlers.GET(nextReq);
         const sessionText = await sessionResponse.text();
         const session = sessionText ? JSON.parse(sessionText) : null;
         if (!session?.user?.id) {
-            res.status(401).json({ error: 'Unauthorized' });
+            res.status(401).json({ error: "Unauthorized" });
             return;
         }
         // Verify user is a member of this guild
@@ -166,7 +166,7 @@ app.get('/api/guilds/:guildId/settings', async (req, res) => {
             .where(eq(discordUsers.userId, session.user.id))
             .limit(1);
         if (discordUser.length === 0) {
-            res.status(403).json({ error: 'Forbidden' });
+            res.status(403).json({ error: "Forbidden" });
             return;
         }
         const member = await db
@@ -175,7 +175,7 @@ app.get('/api/guilds/:guildId/settings', async (req, res) => {
             .where(and(eq(guildMembers.guildId, guildId), eq(guildMembers.userId, discordUser[0].id)))
             .limit(1);
         if (member.length === 0) {
-            res.status(403).json({ error: 'You are not a member of this server' });
+            res.status(403).json({ error: "You are not a member of this server" });
             return;
         }
         // Get or create default settings
@@ -198,34 +198,34 @@ app.get('/api/guilds/:guildId/settings', async (req, res) => {
         res.json({ settings: guildSettings[0] });
     }
     catch (error) {
-        console.error('Error fetching guild settings:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        console.error("Error fetching guild settings:", error);
+        res.status(500).json({ error: "Internal server error" });
     }
 });
 // API endpoint to update guild settings
-app.post('/api/guilds/:guildId/settings', async (req, res) => {
+app.post("/api/guilds/:guildId/settings", async (req, res) => {
     try {
         const { guildId } = req.params;
         const updates = req.body;
         // Verify user is authenticated and has access to this guild
-        const protocol = req.protocol || 'http';
-        const host = req.get('host') || 'localhost:3001';
+        const protocol = req.protocol || "http";
+        const host = req.get("host") || "localhost:3001";
         const fullUrl = `${protocol}://${host}/api/auth/session`;
         const headers = new Headers();
         Object.entries(req.headers).forEach(([key, value]) => {
             if (value) {
-                headers.set(key, Array.isArray(value) ? value.join(', ') : value);
+                headers.set(key, Array.isArray(value) ? value.join(", ") : value);
             }
         });
         const nextReq = new Request(fullUrl, {
-            method: 'GET',
+            method: "GET",
             headers,
         });
         const sessionResponse = await handlers.GET(nextReq);
         const sessionText = await sessionResponse.text();
         const session = sessionText ? JSON.parse(sessionText) : null;
         if (!session?.user?.id) {
-            res.status(401).json({ error: 'Unauthorized' });
+            res.status(401).json({ error: "Unauthorized" });
             return;
         }
         // Verify user is a member of this guild
@@ -235,7 +235,7 @@ app.post('/api/guilds/:guildId/settings', async (req, res) => {
             .where(eq(discordUsers.userId, session.user.id))
             .limit(1);
         if (discordUser.length === 0) {
-            res.status(403).json({ error: 'Forbidden' });
+            res.status(403).json({ error: "Forbidden" });
             return;
         }
         const member = await db
@@ -244,7 +244,7 @@ app.post('/api/guilds/:guildId/settings', async (req, res) => {
             .where(and(eq(guildMembers.guildId, guildId), eq(guildMembers.userId, discordUser[0].id)))
             .limit(1);
         if (member.length === 0) {
-            res.status(403).json({ error: 'You are not a member of this server' });
+            res.status(403).json({ error: "You are not a member of this server" });
             return;
         }
         // Check if settings exist, create if not
@@ -273,12 +273,38 @@ app.post('/api/guilds/:guildId/settings', async (req, res) => {
         res.json({ settings: updated[0] });
     }
     catch (error) {
-        console.error('Error updating guild settings:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        console.error("Error updating guild settings:", error);
+        res.status(500).json({ error: "Internal server error" });
     }
 });
-app.get('/health', (_req, res) => {
-    res.json({ status: 'ok' });
+// Health check endpoint - proxies to the bot's health server
+app.get("/api/health", async (_req, res) => {
+    try {
+        const botHealthUrl = process.env.BOT_HEALTH_URL || "http://localhost:3002";
+        const response = await fetch(`${botHealthUrl}/health`);
+        if (!response.ok) {
+            res.status(response.status).json({
+                status: "error",
+                ready: false,
+                error: `Bot health check failed with status ${response.status}`
+            });
+            return;
+        }
+        const data = await response.json();
+        res.json(data);
+    }
+    catch (error) {
+        console.error("Error checking bot health:", error);
+        res.status(503).json({
+            status: "error",
+            ready: false,
+            error: "Unable to connect to bot health server"
+        });
+    }
+});
+// Web server health check
+app.get("/health", (_req, res) => {
+    res.json({ status: "ok" });
 });
 // Dynamic meta tags for search results (for Discord/social media previews)
 // This route serves HTML with Open Graph meta tags when bots request search pages

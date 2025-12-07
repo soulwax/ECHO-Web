@@ -19,10 +19,15 @@ export default function HealthIndicator() {
 
   const checkHealth = async () => {
     try {
-      const healthPort = import.meta.env.VITE_HEALTH_PORT || '3002';
-      const healthUrl = import.meta.env.VITE_HEALTH_URL || `http://localhost:${healthPort}`;
-
-      const response = await fetch(`${healthUrl}/health`);
+      // Use the web server's proxy endpoint instead of directly calling the bot
+      // The web server will handle proxying to the bot's health server
+      const apiUrl = import.meta.env.VITE_API_URL || window.location.origin;
+      const response = await fetch(`${apiUrl}/api/health`);
+      
+      if (!response.ok) {
+        throw new Error(`Health check failed with status ${response.status}`);
+      }
+      
       const data = await response.json();
       setHealth(data);
       setIsLoading(false);
