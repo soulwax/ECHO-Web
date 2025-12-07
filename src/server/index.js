@@ -280,6 +280,137 @@ app.post('/api/guilds/:guildId/settings', async (req, res) => {
 app.get('/health', (_req, res) => {
     res.json({ status: 'ok' });
 });
+// Dynamic meta tags for search results (for Discord/social media previews)
+// This route serves HTML with Open Graph meta tags when bots request search pages
+app.get('/', async (req, res) => {
+    const query = req.query.q;
+    const userAgent = req.get('user-agent');
+    const protocol = req.protocol || 'http';
+    const host = req.get('host') || 'localhost:3001';
+    const baseUrl = `${protocol}://${host}`;
+    // Check if this is a bot/crawler request
+    const isBotRequest = userAgent && (userAgent.toLowerCase().includes('bot') ||
+        userAgent.toLowerCase().includes('crawler') ||
+        userAgent.toLowerCase().includes('spider') ||
+        userAgent.toLowerCase().includes('facebookexternalhit') ||
+        userAgent.toLowerCase().includes('twitterbot') ||
+        userAgent.toLowerCase().includes('discordbot') ||
+        userAgent.toLowerCase().includes('slackbot') ||
+        userAgent.toLowerCase().includes('whatsapp') ||
+        userAgent.toLowerCase().includes('telegram'));
+    // Only serve meta tags HTML to bots, otherwise let the React app handle it
+    if (!isBotRequest || !query) {
+        // For regular users or no query, serve the normal React app
+        // In production, you'd serve the built index.html here
+        res.redirect(`${baseUrl}?q=${encodeURIComponent(query || '')}`);
+        return;
+    }
+    // For bots with a search query, fetch the first result and serve meta tags
+    try {
+        // TODO: Replace with your actual Starchild Music API endpoint
+        const apiUrl = process.env.STARCHILD_API_URL || 'https://api.starchildmusic.com';
+        const searchResponse = await fetch(`${apiUrl}/search?q=${encodeURIComponent(query)}&limit=1`);
+        let result = null;
+        if (searchResponse.ok) {
+            const data = await searchResponse.json();
+            // Adjust based on your API response structure
+            if (data.results && data.results.length > 0) {
+                const firstResult = data.results[0];
+                result = {
+                    title: firstResult.title || firstResult.name || 'Unknown',
+                    artist: firstResult.artist || firstResult.artistName,
+                    album: firstResult.album || firstResult.albumName,
+                    description: firstResult.description || `${firstResult.artist || ''} - ${firstResult.title || ''}`.trim(),
+                    image: firstResult.image || firstResult.thumbnail || firstResult.coverArt,
+                    url: firstResult.url || firstResult.id,
+                };
+            }
+        }
+        // Generate meta tags HTML
+        const siteName = 'Starchild Music Stream';
+        const defaultDescription = 'Modern music streaming and discovery platform with smart recommendations';
+        let title;
+        let description;
+        let image;
+        let url;
+        if (result) {
+            title = result.artist
+                ? `${result.title} by ${result.artist}`
+                : result.title;
+            description = result.description ||
+                `${result.artist || ''}${result.album ? ` - ${result.album}` : ''}`.trim() ||
+                defaultDescription;
+            image = result.image || `${baseUrl}/default-album-art.jpg`;
+            url = result.url ? `${baseUrl}/track/${result.url}` : `${baseUrl}?q=${encodeURIComponent(query)}`;
+        }
+        else {
+            title = `${siteName} - Search: ${query}`;
+            description = defaultDescription;
+            image = `${baseUrl}/default-album-art.jpg`;
+            url = `${baseUrl}?q=${encodeURIComponent(query)}`;
+        }
+        const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${title} - ${siteName}</title>
+  <meta name="description" content="${description}">
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="${result ? 'music.song' : 'website'}">
+  <meta property="og:url" content="${url}">
+  <meta property="og:title" content="${title}">
+  <meta property="og:description" content="${description}">
+  <meta property="og:image" content="${image}">
+  <meta property="og:site_name" content="${siteName}">
+  ${result?.artist ? `<meta property="music:musician" content="${result.artist}">` : ''}
+  
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="${url}">
+  <meta name="twitter:title" content="${title}">
+  <meta name="twitter:description" content="${description}">
+  <meta name="twitter:image" content="${image}">
+  
+  <script>
+    // Redirect to the actual app
+    window.location.href = '${baseUrl}?q=${encodeURIComponent(query)}';
+  </script>
+</head>
+<body>
+  <p>Redirecting...</p>
+</body>
+</html>`;
+        res.setHeader('Content-Type', 'text/html');
+        res.send(html);
+    }
+    catch (error) {
+        console.error('Error generating meta tags:', error);
+        // Fallback: serve default meta tags
+        const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Starchild Music Stream - Search: ${query}</title>
+  <meta name="description" content="Modern music streaming and discovery platform with smart recommendations">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="${baseUrl}?q=${encodeURIComponent(query)}">
+  <meta property="og:title" content="Starchild Music Stream - Search: ${query}">
+  <meta property="og:description" content="Modern music streaming and discovery platform with smart recommendations">
+  <script>
+    window.location.href = '${baseUrl}?q=${encodeURIComponent(query)}';
+  </script>
+</head>
+<body>
+  <p>Redirecting...</p>
+</body>
+</html>`;
+        res.setHeader('Content-Type', 'text/html');
+        res.send(html);
+    }
+});
 app.listen(PORT, () => {
     console.log(`Auth server running on http://localhost:${PORT}`);
 });
