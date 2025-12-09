@@ -344,8 +344,14 @@ app.post("/api/guilds/:guildId/settings", async (req, res): Promise<void> => {
 // Health check endpoint - proxies to the bot's health server
 app.get("/api/health", async (_req, res): Promise<void> => {
   try {
-    const botHealthUrl = process.env.BOT_HEALTH_URL || "http://localhost:3002";
-    const response = await fetch(`${botHealthUrl}/health`);
+    const botHealthUrl = process.env.BOT_HEALTH_URL || "http://127.0.0.1:3002";
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+
+    const response = await fetch(`${botHealthUrl}/health`, {
+      signal: controller.signal
+    });
+    clearTimeout(timeoutId);
 
     if (!response.ok) {
       res.status(response.status).json({
