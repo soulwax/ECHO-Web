@@ -12,7 +12,7 @@ export default defineConfig({
     allowedHosts: ['echo.soulwax.dev', 'localhost', 'isobel.battlecry.tech'],
     proxy: {
       '/api': {
-        target: process.env.VITE_AUTH_API_URL || 'http://localhost:3001',
+        target: process.env.VITE_AUTH_API_URL || 'http://localhost:3003',
         changeOrigin: true,
       },
     },

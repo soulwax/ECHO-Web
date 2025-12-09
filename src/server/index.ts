@@ -12,7 +12,7 @@ import {
 import { eq, and } from "drizzle-orm";
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3003;
 const FRONTEND_URL = process.env.NEXTAUTH_URL || "http://localhost:3001";
 
 app.use(express.json());
@@ -343,15 +343,21 @@ app.post("/api/guilds/:guildId/settings", async (req, res): Promise<void> => {
 
 // Health check endpoint - proxies to the bot's health server
 app.get("/api/health", async (_req, res): Promise<void> => {
+  const botHealthUrl = process.env.BOT_HEALTH_URL || "http://localhost:3002";
+
   try {
-    const botHealthUrl = process.env.BOT_HEALTH_URL || "http://127.0.0.1:3002";
+    console.log(`Fetching bot health from ${botHealthUrl}/health`);
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+    const timeoutId = setTimeout(() => {
+      console.log("Health check timeout, aborting...");
+      controller.abort();
+    }, 5000); // 5 second timeout
 
     const response = await fetch(`${botHealthUrl}/health`, {
       signal: controller.signal
     });
     clearTimeout(timeoutId);
+    console.log(`Bot health response status: ${response.status}`);
 
     if (!response.ok) {
       res.status(response.status).json({
@@ -369,7 +375,7 @@ app.get("/api/health", async (_req, res): Promise<void> => {
     res.status(503).json({
       status: "error",
       ready: false,
-      error: "Unable to connect to bot health server"
+      error: error instanceof Error ? error.message : "Unable to connect to bot health server"
     });
   }
 });

@@ -38,12 +38,12 @@ module.exports = {
       max_memory_restart: '512M',
       env: {
         NODE_ENV: 'development',
-        PORT: 3001,
+        PORT: 3003,
         NEXTAUTH_URL: 'http://localhost:3001',
       },
       env_production: {
         NODE_ENV: 'production',
-        PORT: 3001,
+        PORT: 3003,
         NEXTAUTH_URL: 'https://isobel.battlecry.tech',
       },
       error_file: path.join(__dirname, 'logs', 'auth-error.log'),
