@@ -5,10 +5,10 @@ import express from "express";
 import { handlers } from "../auth";
 import { db } from "../db";
 import {
-  discordGuilds,
-  discordUsers,
-  guildMembers,
-  settings,
+    discordGuilds,
+    discordUsers,
+    guildMembers,
+    settings,
 } from "../db/schema";
 
 const app = express();
@@ -20,7 +20,23 @@ app.use(express.urlencoded({ extended: true }));
 
 // CORS middleware for development
 app.use((req, res, next): void => {
-  res.header("Access-Control-Allow-Origin", FRONTEND_URL);
+  const origin = req.headers.origin;
+  // Allow requests from frontend URL or any localhost origin in development
+  const allowedOrigins = [
+    FRONTEND_URL,
+    "http://localhost:3001",
+    "http://localhost:3000",
+    "http://127.0.0.1:3001",
+    "http://127.0.0.1:3000",
+  ];
+  
+  if (origin && allowedOrigins.includes(origin)) {
+    res.header("Access-Control-Allow-Origin", origin);
+  } else if (!origin || process.env.NODE_ENV === "development") {
+    // In development, allow requests without origin (like from Vite proxy) or any localhost
+    res.header("Access-Control-Allow-Origin", FRONTEND_URL);
+  }
+  
   res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
   res.header("Access-Control-Allow-Credentials", "true");

@@ -11,8 +11,17 @@ export default function HealthIndicator() {
             // Use the web server's proxy endpoint instead of directly calling the bot
             // The web server will handle proxying to the bot's health server
             const apiUrl = import.meta.env.VITE_API_URL || window.location.origin;
-            const response = await fetch(`${apiUrl}/api/health`);
+            const healthUrl = `${apiUrl}/api/health`;
+            const response = await fetch(healthUrl, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+            });
             if (!response.ok) {
+                const errorText = await response.text();
+                console.error(`Health check failed: ${response.status} ${response.statusText}`, errorText);
                 throw new Error(`Health check failed with status ${response.status}`);
             }
             const data = await response.json();
@@ -20,6 +29,7 @@ export default function HealthIndicator() {
             setIsLoading(false);
         }
         catch (error) {
+            console.error('Health check error:', error);
             setHealth({
                 status: 'error',
                 ready: false,

@@ -1,9 +1,9 @@
 // File: src/server/index.ts
+import { and, eq } from "drizzle-orm";
 import express from "express";
 import { handlers } from "../auth";
 import { db } from "../db";
-import { discordGuilds, guildMembers, discordUsers, settings, } from "../db/schema";
-import { eq, and } from "drizzle-orm";
+import { discordGuilds, discordUsers, guildMembers, settings, } from "../db/schema";
 const app = express();
 const PORT = process.env.PORT || 3003;
 const FRONTEND_URL = process.env.NEXTAUTH_URL || "http://localhost:3001";
@@ -11,7 +11,22 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 // CORS middleware for development
 app.use((req, res, next) => {
-    res.header("Access-Control-Allow-Origin", FRONTEND_URL);
+    const origin = req.headers.origin;
+    // Allow requests from frontend URL or any localhost origin in development
+    const allowedOrigins = [
+        FRONTEND_URL,
+        "http://localhost:3001",
+        "http://localhost:3000",
+        "http://127.0.0.1:3001",
+        "http://127.0.0.1:3000",
+    ];
+    if (origin && allowedOrigins.includes(origin)) {
+        res.header("Access-Control-Allow-Origin", origin);
+    }
+    else if (!origin || process.env.NODE_ENV === "development") {
+        // In development, allow requests without origin (like from Vite proxy) or any localhost
+        res.header("Access-Control-Allow-Origin", FRONTEND_URL);
+    }
     res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
     res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
     res.header("Access-Control-Allow-Credentials", "true");

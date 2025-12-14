@@ -12,6 +12,8 @@ export default defineConfig({
             '/api': {
                 target: process.env.VITE_AUTH_API_URL || 'http://localhost:3003',
                 changeOrigin: true,
+                secure: false,
+                ws: true,
             },
         },
     },
