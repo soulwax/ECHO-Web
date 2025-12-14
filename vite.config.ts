@@ -9,7 +9,7 @@ export default defineConfig({
   server: {
     host: '0.0.0.0', // Listen on all interfaces
     port: 3001,
-    allowedHosts: ['echo.soulwax.dev', 'localhost', 'isobel.battlecry.tech'],
+    allowedHosts: ['echo.soulwax.dev', 'localhost', 'isobel.battlecry.tech', 'isobel.soulwax.dev'],
     proxy: {
       '/api': {
         target: process.env.VITE_AUTH_API_URL || 'http://localhost:3003',

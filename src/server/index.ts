@@ -1,15 +1,15 @@
 // File: src/server/index.ts
 
+import { and, eq } from "drizzle-orm";
 import express from "express";
 import { handlers } from "../auth";
 import { db } from "../db";
 import {
   discordGuilds,
-  guildMembers,
   discordUsers,
+  guildMembers,
   settings,
 } from "../db/schema";
-import { eq, and } from "drizzle-orm";
 
 const app = express();
 const PORT = process.env.PORT || 3003;
